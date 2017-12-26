@@ -7,7 +7,7 @@ function initMap() {
     center: new google.maps.LatLng(23.6,121),
     mapTypeId: 'terrain'
   });
-  var iconUrlPrefix = 'http://maps.google.com/mapfiles/ms/micons/';
+  var iconUrlPrefix = 'https://maps.google.com/mapfiles/ms/micons/';
   var iconUrlSuffix = '.png';
   var iconColors = ['lightblue', 'green', 'yellow', 'orange', 'red', 'purple'];
   var iconGrade = [1000, 5000, 10000, 15000, 20000];
@@ -15,7 +15,7 @@ function initMap() {
   iconColors.forEach(function(color) {
     icons.push(`${iconUrlPrefix}${color}${iconUrlSuffix}`);
   });
-  for (var i = 0; i <= 5; i++) {
+  for (var i = 0; i <= 6; i++) {
     Papa.parse(`./src/data/csv/${i}.csv`, {
       download: true,
       complete: function(results, file) {
@@ -40,6 +40,7 @@ function initMap() {
               // console.log(lat, lng);              
               break;
             case '4':
+            case '6':
               lat = lat.slice(1);
               lng = lng.slice(1);
               break;
