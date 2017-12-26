@@ -7928,6 +7928,14 @@ function initMap() {
     center: new google.maps.LatLng(23.6,121),
     mapTypeId: 'terrain'
   });
+  var iconUrlPrefix = 'http://maps.google.com/mapfiles/ms/micons/';
+  var iconUrlSuffix = '.png';
+  var iconColors = ['lightblue', 'green', 'yellow', 'orange', 'red', 'purple'];
+  var iconGrade = [1000, 5000, 10000, 15000, 20000];
+  var icons = [];
+  iconColors.forEach(function(color) {
+    icons.push(`${iconUrlPrefix}${color}${iconUrlSuffix}`);
+  });
   for (var i = 0; i <= 5; i++) {
     Papa.parse(`./src/data/csv/${i}.csv`, {
       download: true,
@@ -7980,20 +7988,23 @@ function initMap() {
           };
           heatmapData.push(weightedLocation);
           // console.log([latLng.lat(), latLng.lng()], trafficVol);
-          var iconUrlPrefix = 'http://maps.google.com/mapfiles/ms/micons/';
-          var iconUrlSuffix = '.png';
-          var iconGrade = [1000, 5000, 10000, 15000, 20000];
-          var iconColor;
-          if      (trafficVol < iconGrade[0]) iconColor = 'lightblue';
-          else if (trafficVol < iconGrade[1]) iconColor = 'green';
-          else if (trafficVol < iconGrade[2]) iconColor = 'yellow';
-          else if (trafficVol < iconGrade[3]) iconColor = 'orange';
-          else if (trafficVol < iconGrade[4]) iconColor = 'red';
-          else                                iconColor = 'purple';
+          var iconIdx;
+          if      (trafficVol < iconGrade[0]) iconIdx = 0;
+          else if (trafficVol < iconGrade[1]) iconIdx = 1;
+          else if (trafficVol < iconGrade[2]) iconIdx = 2;
+          else if (trafficVol < iconGrade[3]) iconIdx = 3;
+          else if (trafficVol < iconGrade[4]) iconIdx = 4;
+          else                                iconIdx = 5;
           var marker = new google.maps.Marker({
             position: latLng,
             map: map,
-            icon: `${iconUrlPrefix}${iconColor}${iconUrlSuffix}`
+            icon: {
+              url: icons[iconIdx],
+              scaledSize: {
+                height: 20, 
+                width: 15
+              }
+            }
           });
         }
         var heatmap = new google.maps.visualization.HeatmapLayer({
@@ -8004,7 +8015,19 @@ function initMap() {
       }
     });
   }
-
+  var legend = document.getElementById('legend');
+  icons.forEach(function(icon, idx) {
+    var div = document.createElement('div');
+    if (idx == 0) {
+      div.innerHTML = `<img src="${icon}"> ${iconGrade[idx]} 以下`;
+    } else if (idx == 5) {
+      div.innerHTML = `<img src="${icon}"> ${iconGrade[idx - 1]} 以上`;
+    } else {
+      div.innerHTML = `<img src="${icon}"> ${iconGrade[idx - 1]}～${iconGrade[idx]}`;
+    }
+    legend.appendChild(div);
+  });
+  map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(legend);
 }
 initMap();
 
