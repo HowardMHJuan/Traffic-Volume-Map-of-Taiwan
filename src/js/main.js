@@ -8,11 +8,11 @@ function initMap() {
     mapTypeId: 'terrain'
   });
   for (var i = 0; i <= 5; i++) {
-    Papa.parse(`./src/data/2016/${i}.csv`, {
+    Papa.parse(`./src/data/csv/${i}.csv`, {
       download: true,
       complete: function(results, file) {
         console.log("Parsing complete:", results, file);
-        var fileId = file[16];
+        var fileId = file[15];
         var data = results.data;
         var heatmapData = [];
         for (var j = 7; j + 1 < data.length; j += 2) {
@@ -52,20 +52,32 @@ function initMap() {
             default:
           }
           var latLng = new google.maps.LatLng(lat, lng);
+          var trafficVol =  Number(data[j][18].trim().split(',').join(''));
           var weightedLocation = {
             location: latLng,
-            weight: Number(data[j][17].trim().split(',').join(''))
+            weight: trafficVol
           };
           heatmapData.push(weightedLocation);
-          // console.log([latLng.lat(), latLng.lng()], weightedLocation, data[j][17].trim());
-          // var marker = new google.maps.Marker({
-          //   position: latLng,
-          //   map: map
-          // });
+          // console.log([latLng.lat(), latLng.lng()], trafficVol);
+          var iconUrlPrefix = 'http://maps.google.com/mapfiles/ms/micons/';
+          var iconUrlSuffix = '.png';
+          var iconGrade = [1000, 5000, 10000, 15000, 20000];
+          var iconColor;
+          if      (trafficVol < iconGrade[0]) iconColor = 'lightblue';
+          else if (trafficVol < iconGrade[1]) iconColor = 'green';
+          else if (trafficVol < iconGrade[2]) iconColor = 'yellow';
+          else if (trafficVol < iconGrade[3]) iconColor = 'orange';
+          else if (trafficVol < iconGrade[4]) iconColor = 'red';
+          else                                iconColor = 'purple';
+          var marker = new google.maps.Marker({
+            position: latLng,
+            map: map,
+            icon: `${iconUrlPrefix}${iconColor}${iconUrlSuffix}`
+          });
         }
         var heatmap = new google.maps.visualization.HeatmapLayer({
           data: heatmapData,
-          radius: 30,
+          // radius: 20,
           map: map
         });
       }
