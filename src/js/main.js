@@ -1,6 +1,32 @@
 var Papa = require('papaparse');
 var Proj4 = require('proj4');
 var map;
+
+function addWeatherStation() {
+  Papa.parse(`./src/data/weather_station.csv`, {
+    download: true,
+    complete: function(results) {
+      console.log("Parsing complete:", results);
+      var data = results.data;
+      for (var i = 0; i < data.length; i++) {
+        if (data[i].length <= 3 || data[i][3].trim().length == 0) break;
+        var latLng = new google.maps.LatLng(data[i][4], data[i][3]);
+        var marker = new google.maps.Marker({
+          position: latLng,
+          map: map,
+          icon: {
+            url: 'https://upload.wikimedia.org/wikipedia/commons/1/11/BlackDot.svg',
+            scaledSize: {
+              height: 10, 
+              width: 10
+            }
+          }
+        });
+      }
+    }
+  });
+}
+
 function initMap() {
   map = new google.maps.Map(document.getElementById('map'), {
     zoom: 8,
@@ -107,6 +133,12 @@ function initMap() {
     }
     legend.appendChild(div);
   });
+  var div = document.createElement('div');
+  div.setAttribute('id', 'dot');
+  div.innerHTML = `<img src="https://upload.wikimedia.org/wikipedia/commons/1/11/BlackDot.svg">氣象測站`;
+  legend.appendChild(div);
   map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(legend);
+  addWeatherStation();
 }
+
 initMap();
