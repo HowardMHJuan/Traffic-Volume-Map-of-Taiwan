@@ -138,7 +138,7 @@ function initMap() {
   div.innerHTML = `<img src="https://upload.wikimedia.org/wikipedia/commons/1/11/BlackDot.svg">氣象測站`;
   legend.appendChild(div);
   map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(legend);
-  addWeatherStation();
+  // addWeatherStation();
 }
 
 initMap();
