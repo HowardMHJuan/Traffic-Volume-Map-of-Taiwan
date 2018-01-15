@@ -92,7 +92,7 @@ function initMap() {
             location: latLng,
             weight: trafficVol
           };
-          heatmapData.push(weightedLocation);
+          // heatmapData.push(weightedLocation);
           // console.log([latLng.lat(), latLng.lng()], trafficVol);
           var iconIdx;
           if      (trafficVol < iconGrade[0]) iconIdx = 0;
@@ -101,17 +101,17 @@ function initMap() {
           else if (trafficVol < iconGrade[3]) iconIdx = 3;
           else if (trafficVol < iconGrade[4]) iconIdx = 4;
           else                                iconIdx = 5;
-          var marker = new google.maps.Marker({
-            position: latLng,
-            map: map,
-            icon: {
-              url: icons[iconIdx],
-              scaledSize: {
-                height: 20, 
-                width: 15
-              }
-            }
-          });
+          // var marker = new google.maps.Marker({
+          //   position: latLng,
+          //   map: map,
+          //   icon: {
+          //     url: icons[iconIdx],
+          //     scaledSize: {
+          //       height: 20, 
+          //       width: 15
+          //     }
+          //   }
+          // });
         }
         var heatmap = new google.maps.visualization.HeatmapLayer({
           data: heatmapData,
